@@ -1,0 +1,233 @@
+---
+title: "Malaria Parasite Clearance Rate Regression by **`bhrcr`** package"
+author: "Saeed Sharifi-Malvajerdi, Feiyu Zhu^[contributed equally to this work]"
+date: "`r Sys.Date()`"
+output:
+  html_vignette:
+    toc: true
+bibliography: references.bib
+csl: taylor-and-francis-harvard-x.csl
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Quick tutorial for using bhrcr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\LN}{\mathcal{L}\mathcal{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Ps}{\mathbb{P}}
+\newcommand{\Es}{\mathbb{E}}
+\newcommand{\1}{\mathbb{1}}
+\newcommand{\F}{\mathcal{F}}
+
+
+This vignette contains a brief description of malaria parasite clearance rate regression and provides a quick tutorial for **`bhrcr`** package. For more details, see our paper **"Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model"** which will appear in the *Journal of Statistical Software (JSS)*.
+
+## Introduction
+
+Malaria is a mosquito-borne disease caused by parasites that was estimated to cause 429,000 deaths in 2015 (World Malaria Report, 2016).  Resistance to anti-malarial drugs such as Artemisinin is a major concern in the public health fight against malaria [@ashley]. Artemisinin resistance is manifested  by delayed parasite clearance after treatment; slower parasite clearance can therefore indicate emergence of parasite resistance, although it can also be associated with host factors such as decreased immunity, inadequate dosing or poor drug absorption. Understanding how covariates relate to parasite clearance rate is important for understanding host and parasite factors' association with delayed parasite clearance, characterizing resistance and defining spatio-temporal trends in resistance. The parasite clearance rate is defined as the negative of the slope of the log-parasitemia over the time in which the antimalarial is having its primary effect, and we call this time period the "decay" phase. There are some difficulties that arise in calculating the parasite clearance rates. First, some patients' profiles may contain a "lag" phase, before the decay phase, in which the parasite density remains constant, or even increases, in a period right after artemisinin administration (@doolan, @koning). Second, there might be also a "tail" phase, after the decay phase, where the true parasite count remains close to the detection limit, with no decline over a few measurements, and once the detection limit is reached, observations are left censored. Lastly, there may exist measurement errors in the measured values of parasite densities (see @dowling and @omeara for more details). The Parasite Clearance Estimator (PCE) was developed by the WorldWide Antimalarial Resistance Network (WWARN) in response to the need from field researchers for a method to quickly and reliably estimate parasite clearance rates, while accounting for existence of lag phases, tail phases, and censored observations (@flegg).
+
+Although the WWARN PCE serves as a powerful tool for estimating the clearance rates in many studies, estimating the impact of individual level covariates on these clearance rates might be the primary end point in some other studies. For instance, as in @amaratunga, understanding how parasite factors and host factors influence clearance rates can provide insights into the mechanism of artemisinin resistance. One common approach in estimating the effect of individual level covariates on clearance rates is using a *two-stage procedure*, where WWARN PCE is followed by a simple linear regression. Even though using the two-stage approach is straightforward, it has some drawbacks which motivated @fogarty to develop the Bayesian Clearance Estimator. This procedure uses a Bayesian hierarchical model to estimate both clearance rates and the impact of patient level covariates on them, while accounting for lag phases, tail phases, and censored observations. Given the advantages of the Bayesian approach over the two-stage analysis, we built the **`bhrcr`** package to provide researchers in the related fields with software that performs the Bayesian hierarchical regression on clearance rates. The **`bhrcr`** package provides tools (`calculatePCE` function) to calculate the WWARN PCE estimates of the parasite clearance rates as well.
+
+The **`bhrcr`** package takes serial measurements of a response on an individual (e.g., parasite counts after artemisinin administration) that is decaying over time, and performs Bayesian hierarchical regression on the clearance rates. While this tutorial illustrates the method in the context of malaria, the package can be utilized to analyze any clearance data fitting the framework presented in the next section. The *Plasmodium falciparum* clearance data--previously analyzed by [@amaratunga] and [@fogarty]-- is included in this package. We will provide a description of the data shortly. The main function of the **`bhrcr`** package is `clearanceEstimatorBayes`, which will be clarified thoroughly later on. While the `clearanceEstimatorBayes` function returns the WWARN PCE estimates as well, we have incorporated the `calculatePCE` function in the package, which only provides the WWARN PCE estimates of the clearance rates. The generic `summary`, `print`, and `plot` functions , as well as the `diagnostics` function, will be illustrated by examples in following sections.
+
+For a quick demonstration of the package, please run the following functions:
+```{r, eval = FALSE}
+library(bhrcr)
+# If you don't bother to see the step-by-step interactive
+# process of PCE estimation and generating plots
+# please set "ask = F".
+demo(fastExample, ask = F)
+# or we can run the slowExample.
+# to save your time, we have already run the MCMC in the slow example for you.
+# the demo will show you the saved results.
+demo(slowExample, ask = F)
+```
+
+## Bayesian Hierarchical Regression on Clearance Rates: Model
+
+We now briefly present the Bayesian Clearance Estimator developed in @fogarty. Let $y_{ij}$ represent the $j$th measurement of patient $i$'s parasite count at time $t_{ij}$, where $1 \le i \le N$ and $1 \le j \le n_i$^[Note that this method allows uneven measurement times.]. Suppose $\delta_{i}^\ell$ is patient $i$'s time of changepoint between the lag and decay phases, and let $\delta_{i}^\tau$ be patient $i$'s time of changepoint between decay and tail phases. The observed data are assummed to follow a continuous piecewise linear model^[$\1_A$ is the indicator function of $A$ which takes the value one if $A$ occurs, and zero otherwise.]:
+$$
+\log (y_{ij}) = \alpha_i - \beta_i \left(\delta_i ^\ell \1_{ t_{ij} < \delta_i ^\ell} + t_{ij} \1_{ \delta_i ^\ell \le t_{ij} \le \delta_i ^\tau} + \delta_i ^\tau \1_{ t_{ij} > \delta_i ^\tau } \right) + \epsilon_{ij}  \tag{$\dagger$}
+$$
+where $\beta_i$ is the clearance rate of the $i$th individual, and $\epsilon_{ij} \overset{iid} \sim \N (0 , \sigma_\epsilon^2).$^[$\N(\mu, \sigma^2)$ represents the normal distribution with mean $\mu$ and variance $\sigma^2$.]
+
+Within a Bayesian hierarchical structure, the patients, and correspondingly the patients' parameters such as $\{ \beta_i \}_{i=1}^N$ and $\{ \alpha_i \}_{i=1}^N$, are assumed to be draws from a common distribution. This hierarchical structure allows us to borrow strength across patients, in the sense that information about all patients informs the regularization of patient-specific parameters. For details on the prior distributions used in this Bayesian framework, see @fogarty and our JSS paper.
+
+## The `Pursat` Data
+The data sets contained in the **`bhrcr`** package consist of *Plasmodium falciparum* clearance profiles of 110 patients, along with individual level covariates, measured in 2009 and 2010 in the Pursat province of Western Cambodia. Parasite densities were measured every 6 hours, and the detection limit was 15 parasites per microliter. Additionally, parasites were divided into two genetically different groups, labeled *group 1* and *group 2*. All 110 individuals were observed until no parasites were detected in their blood. The individual level covariates are
+
+* Sex: A factor variable with two levels `F` and `M`
+
+* Age Group: 21+ (21 years of age or older), or 21- (younger than 21 years)
+
+* Veal Veng or Kranvanh: whether or not an individual was from these two districts
+
+* Hemoglobin E: the number of alleles of Hemoglobin E variant
+
+* $\alpha$-thalassaemia: the number of alleles of $\alpha$-thalassaemia variant
+
+* G6PD deficient: the number of alleles of G6PD deficient variant
+
+* Log initial parasite density
+
+* Year: `TRUE` if 2010, `FALSE` if 2009
+
+* Parasite group: 1 if *group 1*, 0 if *group 2*
+
+For more details on the data, see [@amaratunga] and [@fogarty]. One can use `data("pursat")` and `data("pursat_covariates")` to access the data sets.
+
+## The `clearanceEstimatorBayes` Function
+The `clearanceEstimatorBayes` function is the principal function in the **`bhrcr`** package that analyzes the input data set in the Bayesian framework presented before, and provides the posterior distributions of the parameters, along with point estimates and credible intervals.
+
+Usage:
+```{r usage, eval = FALSE}
+out <- clearanceEstimatorBayes(data = data, covariates=covariates,
+       seed=1234, detect.limit=40, outlier.detect = TRUE, conf.level=.95,
+       base.log = exp(1), niteration = 100000, burnin = 500, thin = 50, 
+       filename = "output.csv")
+```
+
+See the manual page of this function for more information on the arguments and outputs.
+
+## The `summary` and `print` Functions
+
+The `summary` function produces comprehensive and compressed output information based on the results from the main function, `clearanceEstimatorBayes`. To further illustrate this point, we use the built-in data sets of **`bhrcr`** package, `pursat` and `pursat_covariates`, to provide an example.^[It may take a while to run the code, depending on your computer's hardware. Here we only use a small number of iterations for tutorial purpose.]
+```{r summary, eval = FALSE}
+library(bhrcr)
+data(pursat)
+data(pursat_covariates)
+results <- clearanceEstimatorBayes(data = pursat, 
+           covariates = pursat_covariates, seed = 1234,
+           detect.limit = 15, burnin=50, niteration=100, thin=10)      
+summary(results)
+```
+For reproducibility of our results, we may set the `seed` argument to be `1234`. The output given by `summary` includes a table containing posterior mean and median of the regression coefficients which represent the impact of covariates on log parasite clearance rates and also on the corresponding log half-life values. The half-life value is calculated as $\log(2) ~/ \text{ (Clearance Rate) }$. Thus, even though our method originally regressed log clearance rates rather than log half-lives on the covariates, we can attain the slopes for a regression of the log half-lives by using $\log(\text{Half-Life}) = \log\log(2) - \log(\text{Clearance Rate})$. 
+
+If the input data set does not contain WWARN PCE estimates, the `clearanceEstimatorBayes` function will automatically generate a folder called `PceEstimates` under your current working directory to store calculated WWARN PCE estimates for each individual.
+
+In what follows, we display the results in terms of log half-lives which may be more intuitive to the malaria research community. The half-life is the time it takes for the parasite density to reduce by 50\%; the longer the half-life, the slower the parasite clearance.
+```{r summary result, eval = FALSE}
+Summary:
+
+clearanceEstimatorBayes(data = pursat, covariates = pursat_covariates, 
+    seed = 1234, detect.limit = 15, niteration = 100, burnin = 50, thin = 10)
+
+Posterior Estimates and Intervals for the Effect of Covariates on log half-lives 
+
+               Mean  Median  CI 2.5% CI 97.5%
+(Intercept)   1.1371  1.2486  0.3096   1.7616
+SexM          0.1648  0.1508  0.0755   0.3060
+agegroup21+  -0.0002  0.0163 -0.0674   0.0866
+vvkvTRUE     -0.0227 -0.0295 -0.0985   0.0567
+HbE           0.0898  0.0961 -0.0201   0.2017
+athal        -0.0348 -0.0608 -0.1263   0.1307
+g6pd         -0.0168 -0.0222 -0.0814   0.0579
+lnPf0         0.0356  0.0175 -0.0140   0.1162
+year2010TRUE  0.0465  0.0488 -0.0306   0.1213
+group         0.1532  0.1522  0.0734   0.2418
+---
+Detect Limit:  15 , Log Base:  2.718 
+```
+Based on the output of the `summary` function, we can perform an analysis of the covariates of interest. For details, please see [@fogarty] and our JSS paper. 
+
+## The `diagnostics` Function
+The `diagnostics` function provides diagnostic analysis such as trace plots, ACF and PACF plots for some important parameters in the MCMC process of Gibbs sampling.^[For those who may not be very familiar with Gibbs sampling: In statistics, Gibbs sampling or a Gibbs sampler is a conditional sampling technique for obtaining a sequence of observations which are approximately from a specified multivariate probability distribution, when direct sampling is difficult. This method is frequently used in Bayesian statistics. Usually we need to set a "burn-in" period for our MCMC algorithm and to discard the first $m$ samples. The idea is that a "bad" starting point may over-sample regions that have very low probability under the equilibrium distribution before it converges to the equilibrium distribution. So we need to give the Markov chain time to reach its equilibrium. Furthermore, Gibbs sampling generates a Markov chain of samples, each of which is correlated with nearby samples. Thus if uncorrelated samples are required for the model, we may thin the resulting chain (after the burn-in period) by only taking every $n$-th value, which is called "thinning".] These diagnostic plots help to assess whether it is plausible that the MCMC process has reached stationarity and that we have thinned sufficiently (see [@cowles]; [@gelman2011]).
+```{r diagnostics, eval = FALSE}
+# We use the results given by our previous example
+# All diagnostic plots are saved under "./mcmcDiagnostics"
+diagnostics(results)
+```
+In our fast example, the burn-in period and the total length of simulation (also referred to as the length of Markov chain) are short, which may not provide enough time for convergence. For serious malaria research, our recommendation is: 
+
+1. detect outliers by using the methodology suggested in [@flegg]. We recommend using Flegg's outlier detection method which is included in the function `outlierDetect` in our package. But users can choose to toggle it off by setting `outlier.detect = FALSE` when they are running the main function `clearanceEstimatorBayes`. If the outliers are determined to be likely due to transcription errors, then the outlying data points should be deleted; 
+
+2. run the Gibbs sampling algorithm (already embedded in `clearanceEstimatorBayes`) from different starting points and observe the trace plots, ACF and PACF plots; 
+
+3. determine the suitable burn-in period to make sure the final sample is collected after the Markov chain reaches stationarity; 
+
+4. set a suitable step size in "thinning" to make sure final sample is close to independent if independence is desired (the ACF plot can be used to detect autocorrelation).
+
+The posterior results produced by our fast example may not be very reliable; we have used the fast sample just for tutorial purposes. For the results of the Bayesian clearance estimator to truly reflect the posterior uncertainty in our estimators, we need to ensure that stationarity has been achieved. Results that satisfy the requisite diagnostics are found in a longer sample (`slowExample`), which we have saved into a dataset called \code{posterior.rda} and incorporated into the **`bhrcr`** package. To see the results, just run the slow example in the demo: 
+```{r slowExample, eval = FALSE}
+demo(slowExample, ask = F)
+```
+For detailed analysis of the diagnostic results, please see our JSS paper.
+
+## The `plot` Function
+The `plot` function visualizes the results returned by the `clearanceEstimatorBayes` function. We continue our previous example as follows:
+```{r plot, eval = FALSE}
+# All plots are saved under "./plots"
+plot(results)
+```
+The output provides a group of figures showing all patients' posterior log-parasitemia profiles fitted by the Bayesian method. The following figure shows the profile of patient 1. It seems to exhibit only a decay phase.
+
+```{r patient1, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("./figures/patient_1.pdf")
+```
+
+Whereas the following figure shows patient 81 who is identified as having a lag phase before the decay occurs.
+
+```{r patient81, echo = FALSE, fig.align = "center"}
+knitr::include_graphics("./figures/patient_81.pdf")
+```
+
+By using the following commands, we can calculate the posterior mean, median, and 95\% credible interval of each individual's clearance rate^[We still use the fast example with `seed = 1234` for reproducibility.]. (Or we can pick several specific indivdiuals by using a vector of IDs.)
+```{r, eval = FALSE}
+# Example: Patient 1, 3, 14, 35
+id <- c(1, 3, 14, 35)
+a <- .025
+results$clearance.mean[id]
+[1] 0.10762175 0.08054074 0.08373204 0.11575772
+
+results$clearance.median[id]
+[1] 0.10802284 0.08176813 0.08487102 0.11725616
+
+# If we want to check several patient's profiles simultaneously
+CI <- apply(results$clearance.post[id, ], 1, quantile, probs=c(a, 1-a))
+colnames(CI) <- id
+CI
+               1          3         14        35
+2.5%  0.1005186 0.07273923 0.07624411 0.09641293
+97.5% 0.1167284 0.08816739 0.08975329 0.13476679
+
+# If we want to check only one patient's CI, for example patient id = 1
+id <- 1
+quantile(results$clearance.post[id, ], c(a, 1-a))
+     2.5%     97.5% 
+0.1005186 0.1167284 
+```
+For the patient with id $1$, the posterior mean clearance rate was $0.1076$, the median was $0.1080$ with a 95\% credible interval of $[0.1005, 0.1167]$. For patient $1$, we now check the posterior distribution of the time of changepoint between lag and decay phases by using the following code: 
+```{r, eval = FALSE}
+# Here we focus on patient with id 1
+# The output is a vector of posterior samples of changepoint time
+# We display it in two rows here
+results$changelag.post[id, ]
+[1] 0.000000 0.000000 10.036735 1.831670 0.000000   
+[5] 4.633040 1.847377 0.000000  0.000000 7.982357
+```
+There are 10 posterior samples in total after thinning. We can see that only 20\% of the posterior samples identified this individual as having a lag phase of more than 6 hours, and only 30\% identified a lag phase of more than 3 hours. Again, our analysis here is based on our previous fast example which has a small number of total iterations. So the posterior results are only used for tutorial purpose. For the real data set, the percentage results may be very different.
+
+For the patient with id 81, the posterior mean clearance rate was $0.1284$, the median was $0.1270$ with a 95\% credible interval of $[0.1196, 0.1423]$. There are 100\% posterior of samples identifying this individual as having a lag phase of greater than 6 hours, whereas no samples identified a tail phase, as shown by 
+```{r, eval = FALSE}
+# id <- 81
+results$changetail.post[id, ]
+[1] 84 84 84 84 84 84 84 84 84 84
+```
+which implies that we didn't observe a tail phase in any posterior sample until the end (maximum observation time) of our experiment. The posterior median of the time of changepoint between lag and decay phases for this individual is 24.86 (hours), which can be obtained by
+```{r, eval = FALSE}
+results$lag.median[id]
+[1] 24.8569
+```
+The 95\% credible interval for the time of changepoint between lag and decay phases is $[8.337287, 28.843629]$ (this results is only for tutorial purpose), which can be obtained by 
+```{r, eval = FALSE}
+quantile(results$changelag.post[id, ], c(0.025, 0.975))
+    2.5%     97.5% 
+8.337287 28.843629 
+```
+For a detailed discussion of the plots and the difference among three different posterior curves produced by the `plot` function, please see our JSS paper.
+
+## References
