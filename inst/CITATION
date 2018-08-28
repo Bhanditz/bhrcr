@@ -4,11 +4,11 @@ citEntry(entry = "Article",
   title        = "Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model",
   author       = personList(as.person("Saeed Sharifi-Malvajerdi"), as.person("Feiyu Zhu"), as.person("Colin B. Fogarty"), as.person("Michael P. Fay"), as.person("Rick M. Fairhurst"), as.person("Jennifer A. Flegg"), as.person("Kasia Stepniewska"), as.person("Dylan S. Small")
                    ),
-  journal      = "Journal of Statistical Software",
+  journal      = "Malaria Journal",
   year = "2018",
   textVersion  =
   paste("Sharifi-Malvajerdi, S, Zhu, F, Fogarty, CB, Fay, MP, Fairhurst, RM, Flegg, JA, Stepniewska, K, and  Small, DS (2018).",
         "Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model.",
-        "Journal of Statistical Software")
+        "Malaria Journal")
 )
 

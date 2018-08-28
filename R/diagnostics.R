@@ -99,43 +99,43 @@ diagnostics <- function(object, ...) {
   for (i in 1:nrow(object$gamma.post)) {
     filename = paste('ACF of gamma_', names[i], sep = '')
     pdf(file = sprintf("%s.pdf", filename))
-    acf(object$gamma.post[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+    acf(object$gamma.post[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
     dev.off()
     
     filename = paste('PACF of gamma_', names[i], sep = '')
     pdf(file = sprintf("%s.pdf", filename))
-    pacf(object$gamma.post[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+    pacf(object$gamma.post[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
     dev.off()
   }
   
   filename = 'ACF_of_variance_of_epsilon'
   pdf(file = sprintf("%s.pdf", filename))
-  acf(object$var.epsilon.post, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  acf(object$var.epsilon.post, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'PACF_of_variance_of_epsilon'
   pdf(file = sprintf("%s.pdf", filename))
-  pacf(object$var.epsilon.post, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  pacf(object$var.epsilon.post, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'ACF_of_pi_lag'
   pdf(file = sprintf("%s.pdf", filename))
-  acf(object$p.lag, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  acf(object$p.lag, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'PACF_of_pi_lag'
   pdf(file = sprintf("%s.pdf", filename))
-  pacf(object$p.lag, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  pacf(object$p.lag, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'ACF_of_pi_tail'
   pdf(file = sprintf("%s.pdf", filename))
-  acf(object$p.tail, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  acf(object$p.tail, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'PACF_of_pi_tail'
   pdf(file = sprintf("%s.pdf", filename))
-  pacf(object$p.tail, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  pacf(object$p.tail, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   # trace plots for the samples after burn-in and thinning
@@ -165,43 +165,43 @@ diagnostics <- function(object, ...) {
   for (i in 1:nrow(object$gamma.post.thin)) {
     filename = paste('ACF_of_gamma_', names[i], ' after_thinning', sep = '')
     pdf(file = sprintf("%s.pdf", filename))
-    acf(object$gamma.post.thin[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+    acf(object$gamma.post.thin[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
     dev.off()
     
     filename = paste('PACF_of_gamma_', names[i], ' after_thinning', sep = '')
     pdf(file = sprintf("%s.pdf", filename))
-    pacf(object$gamma.post.thin[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+    pacf(object$gamma.post.thin[i,], lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
     dev.off()
   }
   
   filename = 'ACF_of_variance_of_epsilon_after_thinning'
   pdf(file = sprintf("%s.pdf", filename))
-  acf(object$var.error.post, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  acf(object$var.error.post, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'PACF_of_variance_of_epsilon_after_thinning'
   pdf(file = sprintf("%s.pdf", filename))
-  pacf(object$var.error.post, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  pacf(object$var.error.post, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'ACF_of_pi_lag_after_thinning'
   pdf(file = sprintf("%s.pdf", filename))
-  acf(object$p.lag.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  acf(object$p.lag.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'PACF_of_pi_lag_after_thinning'
   pdf(file = sprintf("%s.pdf", filename))
-  pacf(object$p.lag.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  pacf(object$p.lag.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'ACF_of_pi_tail_after_thinning'
   pdf(file = sprintf("%s.pdf", filename))
-  acf(object$p.tail.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  acf(object$p.tail.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
   
   filename = 'PACF_of_pi_tail_after_thinning'
   pdf(file = sprintf("%s.pdf", filename))
-  pacf(object$p.tail.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Simulations', ylab = 'Values')
+  pacf(object$p.tail.thin, lag.max = step, main = filename, sub=NULL, xlab = 'Lags', ylab = 'Values')
   dev.off()
 
   # restore the original working directory

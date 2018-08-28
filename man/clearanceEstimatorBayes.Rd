@@ -6,8 +6,7 @@
 \usage{
 clearanceEstimatorBayes(data, covariates = NULL, seed = 1234,
   detect.limit = 40, outlier.detect = TRUE, conf.level = 0.95,
-  base.log = exp(1), niteration = 1e+05, burnin = 500, thin = 50,
-  filename = "output.csv")
+  niteration = 1e+05, burnin = 500, thin = 50, filename = "output.csv")
 }
 \arguments{
 \item{data}{a data frame containing the profiles of patients.
@@ -29,8 +28,6 @@ automatically obtained from the system clock.}
 
 \item{conf.level}{required confidence level for reporting credible intervals}
 
-\item{base.log}{Base of the logs used in the analysis}
-
 \item{niteration}{total number of simulations after the burn-in period}
 
 \item{burnin}{length of the burn-in priod in the MCMC used in \code{clearanceEstimatorBayes}}
@@ -45,8 +42,8 @@ The function \link{summary} (i.e., \link{summary.bhrcr}) can be used to obtain a
 \code{clearanceEstimatorBayes} returns an object of class "bhrcr" which is a list containing:
 \item{CALL}{function call}
 \item{clearance.post}{posterior distributions of clearance rates}
-\item{clearance.median}{median values of the posterior distributions of clearance rates}
 \item{clearance.mean}{mean values of the posterior distributions of clearance rates}
+\item{clearance.median}{median values of the posterior distributions of clearance rates}
 \item{intercept.post}{posterior distributions of the intercepts (alpha_i's) in the model}
 \item{gamma.post}{posterior distribution of gamma}
 \item{gamma.post.thin}{thinned posterior sample of gamma}
@@ -57,6 +54,7 @@ The function \link{summary} (i.e., \link{summary.bhrcr}) can be used to obtain a
 \item{halflifeslope.mean}{mean values of the posterior distribution for the effect of covariates on log half-lives}
 \item{halflifeslope.median}{median values of the posterior distribution for the effect of covariates on log half-lives}
 \item{halflifeslope.CI}{Credible intervals for the effect of covariates on log half-lives}
+\item{predicted.pce}{PCE estimates}
 \item{eta.post}{posterior distribution of eta}
 \item{changelag.post}{posterior distributions of changetime between lag and decay phases}
 \item{changetail.post}{posterior distributions of changetime between decay and tail phases}
@@ -70,7 +68,6 @@ The function \link{summary} (i.e., \link{summary.bhrcr}) can be used to obtain a
 \item{counts}{Original parasite counts of all patients}
 \item{counts.current}{Parasite counts of all patients after sampling censored measurements}
 \item{t.overall}{measurement times of all patients}
-\item{predicted.pce}{PCE estimates}
 \item{p.lag}{posterior value of the priori probability of there being a lag phase after simulation}
 \item{p.lag.thin}{thinned posterior sample of the priori probability of there being a lag phase}
 \item{p.tail}{posterior value of the priori probability of there being a tail phase after simulation}
@@ -79,7 +76,6 @@ The function \link{summary} (i.e., \link{summary.bhrcr}) can be used to obtain a
 \item{var2.post}{posterior distribution of d^2}
 \item{mu1.post}{posterior distribution of a}
 \item{mu2.post}{posterior distribution of b}
-\item{log.base}{the log base}
 \item{detect.limit}{the detection limit of parasitemia}
 \item{lag.post}{posterior distributions of index of changetime between lag and decay phases}
 \item{lag2.post}{posterior distributions of index of changetime between decay and tail phases}
@@ -101,6 +97,23 @@ based on observations within the decay phase. The Bayesian approach allows us to
 lag, decay, and tail phases within an individual's clearance profile as themselves being random variables,
 thus taking into account the additional uncertainty of boundaries between phases.
 Details are in Fogarty et al. (2015).
+}
+\examples{
+\dontshow{
+data("pursat")
+data("pursat_covariates")
+data = pursat[pursat["id"] <= 80 & pursat["id"] > 70,]
+covariates = pursat_covariates[71:80,]
+out <- clearanceEstimatorBayes(data = data, covariates = covariates, outlier.detect = TRUE,
+                              niteration = 3, burnin = 1, thin = 1)
+}
+\donttest{
+data("pursat")
+data("pursat_covariates")
+out <- clearanceEstimatorBayes(data = pursat, covariates = pursat_covariates, outlier.detect = TRUE,
+                               niteration = 200, burnin = 50, thin = 10)
+}
+
 }
 \references{
 Flegg, J. A., Guerin, P. J., White, N. J., & Stepniewska, K. (2011). 

@@ -60,7 +60,7 @@ if (!dir.exists(paste(dir, "/plots", sep=""))){
 }
 setwd(paste(dir,"/plots", sep=""))
 
-log.base = x$log.base
+log.base = exp(1)
 detect.limit = x$detect.limit
 begin = 1
 
@@ -185,7 +185,7 @@ for(j in id.plot) {
 	
 	#hist(beta.post[j, thin])
 	# Flegg Estimates
-	lines(xt, x$predicted.flegg[index[[j]]], col = "purple", lwd = 2)
+	lines(xt, x$predicted.pce[index[[j]]], col = "purple", lwd = 2)
 	
 	#abline(median(x$intercept.post[j,begin:end]), median(-x$clearance.post[j,begin:end]), lwd = 2)
 	#abline(mean(x$intercept.post[j,begin:end]), mean(-x$clearance.post[j,begin:end]), col = "blue", lwd = 2)
@@ -194,7 +194,7 @@ for(j in id.plot) {
 	# Censored Observations
 	points(x$t.overall[index[[j]]][lc < log(detect.limit, base = log.base)], rep(log(detect.limit, base = log.base), times = sum(lc < log(detect.limit, base = log.base))), col = "green", pch = 17)
 	
-	legend("bottomleft", c("Flegg et al Estimate", "Bayes Estimate - Median", "Posterior Median", "Bayes Estimate - Mean", "Posterior Sample", "Censored Observation"), 
+	legend("bottomleft", c("WWARN PCE Estimate", "Bayes Estimate - Median", "Posterior Median", "Bayes Estimate - Mean", "Posterior Sample", "Censored Observation"), 
 	       lwd = c(2,2,2,2,2, NA), pch = c(NA, NA, NA, NA, NA, 17), col=c("purple", "blue","red", "black", "grey", "green"), cex = .8)
 	#print(outlier.freq[[j]])
 	

@@ -17,7 +17,6 @@
 #' @param outlier.detect indicator of whether or not to use Flegg's outlier detection method.
 #' \code{outlier.detect = TRUE} is recommended.
 #' @param conf.level required confidence level for reporting credible intervals
-#' @param base.log Base of the logs used in the analysis
 #' @param niteration total number of simulations after the burn-in period
 #' @param burnin length of the burn-in priod in the MCMC used in \code{clearanceEstimatorBayes}
 #' @param thin step size of the thinning process in the MCMC used in \code{clearanceEstimatorBayes}
@@ -40,8 +39,8 @@
 #' \code{clearanceEstimatorBayes} returns an object of class "bhrcr" which is a list containing:
 #' \item{CALL}{function call}
 #' \item{clearance.post}{posterior distributions of clearance rates}
-#' \item{clearance.median}{median values of the posterior distributions of clearance rates}
 #' \item{clearance.mean}{mean values of the posterior distributions of clearance rates}
+#' \item{clearance.median}{median values of the posterior distributions of clearance rates}
 #' \item{intercept.post}{posterior distributions of the intercepts (alpha_i's) in the model}
 #' \item{gamma.post}{posterior distribution of gamma}
 #' \item{gamma.post.thin}{thinned posterior sample of gamma}
@@ -52,6 +51,7 @@
 #' \item{halflifeslope.mean}{mean values of the posterior distribution for the effect of covariates on log half-lives}
 #' \item{halflifeslope.median}{median values of the posterior distribution for the effect of covariates on log half-lives}
 #' \item{halflifeslope.CI}{Credible intervals for the effect of covariates on log half-lives}
+#' \item{predicted.pce}{PCE estimates}
 #' \item{eta.post}{posterior distribution of eta}
 #' \item{changelag.post}{posterior distributions of changetime between lag and decay phases}
 #' \item{changetail.post}{posterior distributions of changetime between decay and tail phases}
@@ -65,7 +65,6 @@
 #' \item{counts}{Original parasite counts of all patients}
 #' \item{counts.current}{Parasite counts of all patients after sampling censored measurements}
 #' \item{t.overall}{measurement times of all patients}
-#' \item{predicted.pce}{PCE estimates}
 #' \item{p.lag}{posterior value of the priori probability of there being a lag phase after simulation}
 #' \item{p.lag.thin}{thinned posterior sample of the priori probability of there being a lag phase}
 #' \item{p.tail}{posterior value of the priori probability of there being a tail phase after simulation}
@@ -74,7 +73,6 @@
 #' \item{var2.post}{posterior distribution of d^2}
 #' \item{mu1.post}{posterior distribution of a}
 #' \item{mu2.post}{posterior distribution of b}
-#' \item{log.base}{the log base}
 #' \item{detect.limit}{the detection limit of parasitemia}
 #' \item{lag.post}{posterior distributions of index of changetime between lag and decay phases}
 #' \item{lag2.post}{posterior distributions of index of changetime between decay and tail phases}
@@ -110,6 +108,7 @@
 #' covariates = pursat_covariates[71:80,]
 #' out <- clearanceEstimatorBayes(data = data, covariates = covariates, outlier.detect = TRUE,
 #'                               niteration = 3, burnin = 1, thin = 1)
+#' }
 #' \donttest{
 #' data("pursat")
 #' data("pursat_covariates")
@@ -119,7 +118,15 @@
 #' 
 
 
-clearanceEstimatorBayes = function(data, covariates = NULL, seed = 1234, detect.limit = 40, outlier.detect = TRUE, conf.level = .95, base.log = exp(1), niteration = 100000, burnin = 500, thin = 50, filename = "output.csv"){
+clearanceEstimatorBayes = function(data, covariates = NULL, seed = 1234, detect.limit = 40, outlier.detect = TRUE, conf.level = .95, niteration = 100000, burnin = 500, thin = 50, filename = "output.csv"){
+
+base.log = exp(1)
+
+if (!identical(
+  dimnames(data)[[2]][1:3],
+  c("id","time","count"))){
+  stop("first three columns of data must be named 'id', 'time', and 'count' in that order, names are case sensitive")
+}
 
 if(!is.null(seed)) set.seed(seed)
 
@@ -743,20 +750,32 @@ write.csv(cbind(unique.id, clearance.mean, lag.median, tail.median), filename)
 
 rownames(change.post)  <- unique.id
 rownames(change2.post) <- unique.id
+names(clearance.mean) <- unique.id
+names(clearance.median) <- unique.id
+clearance.post = -beta.post[,thin]
+dimnames(clearance.post) <- list(unique.id, NULL)
+dimnames(alpha.post) <- list(unique.id, NULL)
+
+rownames(lag.post) <- unique.id
+rownames(lag2.post) <- unique.id
+rownames(theta.post) <- unique.id
+rownames(theta2.post) <- unique.id
+names(lag.median) <- unique.id
+names(tail.median) <- unique.id
 
 ## We define a class called "bhrcr" for the output, following the rule of S3 method in R.
-results <- list(CALL = match.call(), clearance.median = clearance.median, clearance.mean = clearance.mean, clearance.post = -beta.post[,thin], 
-                intercept.post = alpha.post[,thin], gamma.post = gamma.post, gamma.post.thin = gamma.post[,thin], gamma.median = gamma.median, gamma.mean = gamma.mean , 
+results <- list(CALL = match.call(), clearance.median = clearance.median, clearance.mean = clearance.mean, clearance.post = clearance.post, 
+                intercept.post = alpha.post[,thin], gamma.post = gamma.post, gamma.post.thin = gamma.post[,thin], gamma.median = gamma.median, gamma.mean = gamma.mean, 
                 gamma.CI = gamma.CI, halflifeslope.post = halflifeslope.post[,thin], halflifeslope.median = halflifeslope.median,
                 halflifeslope.mean = halflifeslope.mean, halflifeslope.CI = halflifeslope.CI,
                 eta.post = eta.post[,thin], var.epsilon.post = var.epsilon.post, var.error.post = var.epsilon.post[thin], changelag.post = change.post[,thin], 
                 changetail.post = change2.post[,thin], index = index, lag.post = lag.post[,thin], 
                 lag2.post = lag2.post[,thin], counts.current = counts.current, t.overall = t.overall, 
-                theta.post = theta.post[,thin], theta2.post = theta2.post[,thin], predicted.flegg = predicted.flegg, 
+                theta.post = theta.post[,thin], theta2.post = theta2.post[,thin], predicted.pce = predicted.flegg, 
                 counts = counts, var.beta.post = var.beta.post[thin], var.alpha.post = var.alpha.post[thin], 
-                p.lag = p.lag.post, p.lag.thin = p.lag.post[thin], p.tail = p.tail.post, p.tail.thin = p.tail.post[thin], log.base = base.log, detect.limit = detect.limit,
+                p.lag = p.lag.post, p.lag.thin = p.lag.post[thin], p.tail = p.tail.post, p.tail.thin = p.tail.post[thin], detect.limit = detect.limit,
                 var1.post = var1.post, var2.post = var2.post, mu1.post = mu1.post, mu2.post = mu2.post, 
-                lag.median = lag.median, tail.median = tail.median, burnin = burnin)
+                lag.median = lag.median, tail.median = tail.median, burnin = burnin, id = unique.id)
 class(results) <- c("bhrcr", "list")
 return(results)
 }

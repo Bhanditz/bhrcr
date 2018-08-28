@@ -12,7 +12,7 @@
 
 <meta name="author" content="Saeed Sharifi-Malvajerdi, Feiyu Zhu" />
 
-<meta name="date" content="2018-03-09" />
+<meta name="date" content="2018-08-27" />
 
 <title>Malaria Parasite Clearance Rate Regression by bhrcr package</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Malaria Parasite Clearance Rate Regression by <strong><code>bhrcr</code></strong> package</h1>
 <h4 class="author"><em>Saeed Sharifi-Malvajerdi, Feiyu Zhu<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></em></h4>
-<h4 class="date"><em>2018-03-09</em></h4>
+<h4 class="date"><em>2018-08-27</em></h4>
 
 
 <div id="TOC">
@@ -86,7 +86,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 
-<p>This vignette contains a brief description of malaria parasite clearance rate regression and provides a quick tutorial for <strong><code>bhrcr</code></strong> package. For more details, see our paper <strong>“Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model”</strong> which will appear in the <em>Journal of Statistical Software (JSS)</em>.</p>
+<p>This vignette contains a brief description of malaria parasite clearance rate regression and provides a quick tutorial for <strong><code>bhrcr</code></strong> package. For more details, see our paper <strong>“Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model”</strong> which will appear in the <em>Malaria Journal</em>.</p>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>Malaria is a mosquito-borne disease caused by parasites that was estimated to cause 429,000 deaths in 2015 (World Malaria Report, 2016). Resistance to anti-malarial drugs such as Artemisinin is a major concern in the public health fight against malaria <span class="citation">(Ashley <em>et al.</em> <a href="#ref-ashley">2014</a>)</span>. Artemisinin resistance is manifested by delayed parasite clearance after treatment; slower parasite clearance can therefore indicate emergence of parasite resistance, although it can also be associated with host factors such as decreased immunity, inadequate dosing or poor drug absorption. Understanding how covariates relate to parasite clearance rate is important for understanding host and parasite factors’ association with delayed parasite clearance, characterizing resistance and defining spatio-temporal trends in resistance. The parasite clearance rate is defined as the negative of the slope of the log-parasitemia over the time in which the antimalarial is having its primary effect, and we call this time period the “decay” phase. There are some difficulties that arise in calculating the parasite clearance rates. First, some patients’ profiles may contain a “lag” phase, before the decay phase, in which the parasite density remains constant, or even increases, in a period right after artemisinin administration (<span class="citation">Doolan (<a href="#ref-doolan">2002</a>)</span>, <span class="citation">Koning (<a href="#ref-koning">2007</a>)</span>). Second, there might be also a “tail” phase, after the decay phase, where the true parasite count remains close to the detection limit, with no decline over a few measurements, and once the detection limit is reached, observations are left censored. Lastly, there may exist measurement errors in the measured values of parasite densities (see <span class="citation">Dowling and Shute (<a href="#ref-dowling">1966</a>)</span> and <span class="citation">O’Meara <em>et al.</em> (<a href="#ref-omeara">2005</a>)</span> for more details). The Parasite Clearance Estimator (PCE) was developed by the WorldWide Antimalarial Resistance Network (WWARN) in response to the need from field researchers for a method to quickly and reliably estimate parasite clearance rates, while accounting for existence of lag phases, tail phases, and censored observations (<span class="citation">Flegg <em>et al.</em> (<a href="#ref-flegg">2011</a>)</span>).</p>
@@ -132,7 +132,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Usage:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out &lt;-<span class="st"> </span><span class="kw">clearanceEstimatorBayes</span>(<span class="dt">data =</span> data, <span class="dt">covariates=</span>covariates,
        <span class="dt">seed=</span><span class="dv">1234</span>, <span class="dt">detect.limit=</span><span class="dv">40</span>, <span class="dt">outlier.detect =</span> <span class="ot">TRUE</span>, <span class="dt">conf.level=</span>.<span class="dv">95</span>,
-       <span class="dt">base.log =</span> <span class="kw">exp</span>(<span class="dv">1</span>), <span class="dt">niteration =</span> <span class="dv">100000</span>, <span class="dt">burnin =</span> <span class="dv">500</span>, <span class="dt">thin =</span> <span class="dv">50</span>, 
+       <span class="dt">niteration =</span> <span class="dv">100000</span>, <span class="dt">burnin =</span> <span class="dv">500</span>, <span class="dt">thin =</span> <span class="dv">50</span>, 
        <span class="dt">filename =</span> <span class="st">&quot;output.csv&quot;</span>)</code></pre></div>
 <p>See the manual page of this function for more information on the arguments and outputs.</p>
 </div>

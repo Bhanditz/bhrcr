@@ -12,7 +12,7 @@
 ## ----usage, eval = FALSE-------------------------------------------------
 #  out <- clearanceEstimatorBayes(data = data, covariates=covariates,
 #         seed=1234, detect.limit=40, outlier.detect = TRUE, conf.level=.95,
-#         base.log = exp(1), niteration = 100000, burnin = 500, thin = 50,
+#         niteration = 100000, burnin = 500, thin = 50,
 #         filename = "output.csv")
 
 ## ----summary, eval = FALSE-----------------------------------------------

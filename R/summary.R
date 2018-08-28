@@ -62,5 +62,5 @@ summary.bhrcr <- function(object, ...) {
   print(table2)
   
   cat("---\n")
-  cat(paste("Detect Limit: ", object$detect.limit, ", Log Base: ", round(object$log.base,3), "\n"))
+  cat(paste("Detect Limit: ", object$detect.limit, "\n"))
 } 
