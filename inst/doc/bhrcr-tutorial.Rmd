@@ -55,7 +55,7 @@ $$
 $$
 where $\beta_i$ is the clearance rate of the $i$th individual, and $\epsilon_{ij} \overset{iid} \sim \N (0 , \sigma_\epsilon^2).$^[$\N(\mu, \sigma^2)$ represents the normal distribution with mean $\mu$ and variance $\sigma^2$.]
 
-Within a Bayesian hierarchical structure, the patients, and correspondingly the patients' parameters such as $\{ \beta_i \}_{i=1}^N$ and $\{ \alpha_i \}_{i=1}^N$, are assumed to be draws from a common distribution. This hierarchical structure allows us to borrow strength across patients, in the sense that information about all patients informs the regularization of patient-specific parameters. For details on the prior distributions used in this Bayesian framework, see @fogarty and our JSS paper.
+Within a Bayesian hierarchical structure, the patients, and correspondingly the patients' parameters such as $\{ \beta_i \}_{i=1}^N$ and $\{ \alpha_i \}_{i=1}^N$, are assumed to be draws from a common distribution. This hierarchical structure allows us to borrow strength across patients, in the sense that information about all patients informs the regularization of patient-specific parameters. For details on the prior distributions used in this Bayesian framework, see @fogarty and our paper which will appear in the Malaria Journal.
 
 ## The `Pursat` Data
 The data sets contained in the **`bhrcr`** package consist of *Plasmodium falciparum* clearance profiles of 110 patients, along with individual level covariates, measured in 2009 and 2010 in the Pursat province of Western Cambodia. Parasite densities were measured every 6 hours, and the detection limit was 15 parasites per microliter. Additionally, parasites were divided into two genetically different groups, labeled *group 1* and *group 2*. All 110 individuals were observed until no parasites were detected in their blood. The individual level covariates are
@@ -132,7 +132,7 @@ group         0.1532  0.1522  0.0734   0.2418
 ---
 Detect Limit:  15 , Log Base:  2.718 
 ```
-Based on the output of the `summary` function, we can perform an analysis of the covariates of interest. For details, please see [@fogarty] and our JSS paper. 
+Based on the output of the `summary` function, we can perform an analysis of the covariates of interest. For details, please see [@fogarty] and our paper. 
 
 ## The `diagnostics` Function
 The `diagnostics` function provides diagnostic analysis such as trace plots, ACF and PACF plots for some important parameters in the MCMC process of Gibbs sampling.^[For those who may not be very familiar with Gibbs sampling: In statistics, Gibbs sampling or a Gibbs sampler is a conditional sampling technique for obtaining a sequence of observations which are approximately from a specified multivariate probability distribution, when direct sampling is difficult. This method is frequently used in Bayesian statistics. Usually we need to set a "burn-in" period for our MCMC algorithm and to discard the first $m$ samples. The idea is that a "bad" starting point may over-sample regions that have very low probability under the equilibrium distribution before it converges to the equilibrium distribution. So we need to give the Markov chain time to reach its equilibrium. Furthermore, Gibbs sampling generates a Markov chain of samples, each of which is correlated with nearby samples. Thus if uncorrelated samples are required for the model, we may thin the resulting chain (after the burn-in period) by only taking every $n$-th value, which is called "thinning".] These diagnostic plots help to assess whether it is plausible that the MCMC process has reached stationarity and that we have thinned sufficiently (see [@cowles]; [@gelman2011]).
@@ -155,7 +155,7 @@ The posterior results produced by our fast example may not be very reliable; we 
 ```{r slowExample, eval = FALSE}
 demo(slowExample, ask = F)
 ```
-For detailed analysis of the diagnostic results, please see our JSS paper.
+For detailed analysis of the diagnostic results, please see our paper.
 
 ## The `plot` Function
 The `plot` function visualizes the results returned by the `clearanceEstimatorBayes` function. We continue our previous example as follows:
@@ -228,6 +228,6 @@ quantile(results$changelag.post[id, ], c(0.025, 0.975))
     2.5%     97.5% 
 8.337287 28.843629 
 ```
-For a detailed discussion of the plots and the difference among three different posterior curves produced by the `plot` function, please see our JSS paper.
+For a detailed discussion of the plots and the difference among three different posterior curves produced by the `plot` function, please see our paper.
 
 ## References

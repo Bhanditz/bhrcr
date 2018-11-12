@@ -2,8 +2,8 @@ Package: bhrcr
 Type: Package
 Title: Bayesian Hierarchical Regression on Clearance Rates in the
         Presence of Lag and Tail Phases
-Version: 1.0.1
-Date: 2018-08-27
+Version: 1.0.2
+Date: 2018-11-12
 Author: Colin B. Fogarty [cre] <cfogarty@mit.edu>,
         Saeed Sharifi-Malvajerdi [aut] <saeedsh@wharton.upenn.edu>, 
         Feiyu Zhu [aut] <feiyuzhu@sas.upenn.edu>
@@ -22,6 +22,6 @@ VignetteBuilder: knitr
 License: GPL-3
 RoxygenNote: 6.1.0
 NeedsCompilation: no
-Packaged: 2018-08-27 22:01:22 UTC; saeedsh
+Packaged: 2018-11-12 15:03:22 UTC; saeedsh
 Repository: CRAN
-Date/Publication: 2018-08-28 04:24:26 UTC
+Date/Publication: 2018-11-12 15:50:04 UTC

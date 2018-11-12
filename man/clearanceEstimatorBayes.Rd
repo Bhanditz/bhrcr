@@ -14,10 +14,10 @@ This data frame must contain \code{id}, \code{time}, and \code{count} columns,
 in that order. The first column represents the IDs of patients. 
 The second and third columns contain parasite measurements (per microliter) in different times.}
 
-\item{covariates}{an optional data frame containing individual level covaraites. This argument may be \code{NULL}, 
+\item{covariates}{an optional data frame containing individual level covariates. This argument may be \code{NULL}, 
 in which case estimation of clearance rates is of primary interest.}
 
-\item{seed}{a user-sepcified number used to initialize a pseudorandom number generator. 
+\item{seed}{a user-specified number used to initialize a pseudorandom number generator. 
 The default value is set to be 1234 for reproducibility. If \code{seed = NULL}, then its value will be 
 automatically obtained from the system clock.}
 
@@ -30,7 +30,7 @@ automatically obtained from the system clock.}
 
 \item{niteration}{total number of simulations after the burn-in period}
 
-\item{burnin}{length of the burn-in priod in the MCMC used in \code{clearanceEstimatorBayes}}
+\item{burnin}{length of the burn-in period in the MCMC used in \code{clearanceEstimatorBayes}}
 
 \item{thin}{step size of the thinning process in the MCMC used in \code{clearanceEstimatorBayes}}
 
@@ -85,7 +85,7 @@ The function \link{summary} (i.e., \link{summary.bhrcr}) can be used to obtain a
 }
 \description{
 \code{clearanceEstimatorBayes} estimates the parasite clearance rates by using a Bayesian hierarchical model. 
-Moreoever, it provides regression analysis of clearance rates on given covariates.
+Moreover, it provides regression analysis of clearance rates on given covariates.
 }
 \details{
 This function estimates parasite clearance rates, along with the effect of covariates on them, 

@@ -2,15 +2,15 @@
 #'
 #' @description
 #' \code{clearanceEstimatorBayes} estimates the parasite clearance rates by using a Bayesian hierarchical model. 
-#' Moreoever, it provides regression analysis of clearance rates on given covariates.
+#' Moreover, it provides regression analysis of clearance rates on given covariates.
 #' 
 #' @param data a data frame containing the profiles of patients.
 #' This data frame must contain \code{id}, \code{time}, and \code{count} columns, 
 #' in that order. The first column represents the IDs of patients. 
 #' The second and third columns contain parasite measurements (per microliter) in different times.
-#' @param covariates an optional data frame containing individual level covaraites. This argument may be \code{NULL}, 
+#' @param covariates an optional data frame containing individual level covariates. This argument may be \code{NULL}, 
 #' in which case estimation of clearance rates is of primary interest.
-#' @param seed a user-sepcified number used to initialize a pseudorandom number generator. 
+#' @param seed a user-specified number used to initialize a pseudorandom number generator. 
 #' The default value is set to be 1234 for reproducibility. If \code{seed = NULL}, then its value will be 
 #' automatically obtained from the system clock.
 #' @param detect.limit detection limit of the parasite density in blood (parasites per microliter)
@@ -18,7 +18,7 @@
 #' \code{outlier.detect = TRUE} is recommended.
 #' @param conf.level required confidence level for reporting credible intervals
 #' @param niteration total number of simulations after the burn-in period
-#' @param burnin length of the burn-in priod in the MCMC used in \code{clearanceEstimatorBayes}
+#' @param burnin length of the burn-in period in the MCMC used in \code{clearanceEstimatorBayes}
 #' @param thin step size of the thinning process in the MCMC used in \code{clearanceEstimatorBayes}
 #' @param filename the name of the csv file used to store some output elements. This file contains
 #' \code{id}, \code{clearance.mean}, \code{lag.median}, and \code{tail.median}.

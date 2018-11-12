@@ -118,9 +118,9 @@ for(j in id.plot) {
 	llag = x$intercept.post[j,k] -x$clearance.post[j,k]*tlag
 	ldecay = x$intercept.post[j,k] -x$clearance.post[j,k]*tdecay
 	ltail = x$intercept.post[j,k] -x$clearance.post[j,k]*ttail
-	lines(tlag.plot, llag, col = "grey")
-	lines(tdecay.plot, ldecay, col = "grey")
-	lines(ttail.plot, ltail, col = "grey")
+	#lines(tlag.plot, llag, col = "grey")
+	#lines(tdecay.plot, ldecay, col = "grey")
+	#lines(ttail.plot, ltail, col = "grey")
 	t2 = c(tlag.plot, tdecay.plot, ttail.plot)
 	llag.new = llag
 	ltail.new = ltail
@@ -131,6 +131,16 @@ for(j in id.plot) {
 	i = i+1
 	}
 	}
+	#######################Credible Bands#############################
+	times = x$t.overall[index[[j]]]
+	lower.val = rep(0,length(times))
+	upper.val = rep(0,length(times))
+	for (t in 1:length(times)){
+	  lower.val[t] = quantile(posterior.sample[,t], 0.025)
+	  upper.val[t] = quantile(posterior.sample[,t], 0.975)
+	}
+	lines(times, lower.val, col = "brown")
+	lines(times, upper.val, col = "brown")
 	#######################New Median Curve#############################
 	times = x$t.overall[index[[j]]]
 	med.val = rep(0,length(times))
@@ -194,9 +204,12 @@ for(j in id.plot) {
 	# Censored Observations
 	points(x$t.overall[index[[j]]][lc < log(detect.limit, base = log.base)], rep(log(detect.limit, base = log.base), times = sum(lc < log(detect.limit, base = log.base))), col = "green", pch = 17)
 	
-	legend("bottomleft", c("WWARN PCE Estimate", "Bayes Estimate - Median", "Posterior Median", "Bayes Estimate - Mean", "Posterior Sample", "Censored Observation"), 
-	       lwd = c(2,2,2,2,2, NA), pch = c(NA, NA, NA, NA, NA, 17), col=c("purple", "blue","red", "black", "grey", "green"), cex = .8)
+	#legend("bottomleft", c("WWARN PCE Estimate", "Bayes Estimate - Median", "Posterior Median", "Bayes Estimate - Mean", "Posterior Sample", "Censored Observation"), 
+	#       lwd = c(2,2,2,2,1, NA), pch = c(NA, NA, NA, NA, NA, 17), col=c("purple", "blue","red", "black", "grey", "green"), cex = .8)
 	#print(outlier.freq[[j]])
+	
+	legend("bottomleft", c("WWARN PCE Estimate", "Bayes Estimate - Median", "Posterior Median", "Bayes Estimate - Mean", "95% Credible Band", "Censored Observation"), 
+	       lwd = c(2,2,2,2,1, NA), pch = c(NA, NA, NA, NA, NA, 17), col=c("purple", "blue","red", "black", "brown", "green"), cex = .8)
 	
 	dev.off()
 }
