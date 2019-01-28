@@ -4,7 +4,8 @@
 \alias{plot.bhrcr}
 \title{Bayesian Clearance Estimator Plotting}
 \usage{
-\method{plot}{bhrcr}(x, plot.post = T, id.plot = NULL, thin = NULL, ...)
+\method{plot}{bhrcr}(x, plot.post = T, id.plot = NULL, thin = NULL,
+  ...)
 }
 \arguments{
 \item{x}{output given by \code{clearanceEstimatorBayes}}

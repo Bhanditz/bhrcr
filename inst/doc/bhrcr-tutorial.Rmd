@@ -24,7 +24,7 @@ vignette: >
 \newcommand{\F}{\mathcal{F}}
 
 
-This vignette contains a brief description of malaria parasite clearance rate regression and provides a quick tutorial for **`bhrcr`** package. For more details, see our paper **"Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model"** which will appear in the *Malaria Journal*.
+This vignette contains a brief description of malaria parasite clearance rate regression and provides a quick tutorial for the **`bhrcr`** package. For more details, please see our paper @Sharifi-Malvajerdi2019.
 
 ## Introduction
 
@@ -143,13 +143,13 @@ diagnostics(results)
 ```
 In our fast example, the burn-in period and the total length of simulation (also referred to as the length of Markov chain) are short, which may not provide enough time for convergence. For serious malaria research, our recommendation is: 
 
-1. detect outliers by using the methodology suggested in [@flegg]. We recommend using Flegg's outlier detection method which is included in the function `outlierDetect` in our package. But users can choose to toggle it off by setting `outlier.detect = FALSE` when they are running the main function `clearanceEstimatorBayes`. If the outliers are determined to be likely due to transcription errors, then the outlying data points should be deleted; 
+1. detect outliers by using the methodology suggested in [@flegg]. Flegg's outlier detection method is recommended. However, users can choose to toggle it off by setting `outlier.detect = FALSE` when they are running the main function `clearanceEstimatorBayes`. If the outliers are determined to be likely due to transcription errors, then the outlying data points should be deleted; 
 
-2. run the Gibbs sampling algorithm (already embedded in `clearanceEstimatorBayes`) from different starting points and observe the trace plots, ACF and PACF plots; 
+2. run the MCMC algorithm (already embedded in `clearanceEstimatorBayes`) with various lengths and observe the trace plots, ACF plots (explained later), which helps determine the suitable burn-in period. Make sure the final sample is collected after the Markov chain reaches stationarity, i.e. the distribution of the values after the burn-in ends should be similar to the values at the middle and end of the chain. For the current version of `bhrcr`, parallelization is not supported so that users have to run one chain at a time;
 
-3. determine the suitable burn-in period to make sure the final sample is collected after the Markov chain reaches stationarity; 
+3. run the formal MCMC with a long run instead of just several short runs. Only a long run can give the Markov chain enough time to mix well and thus to get its equilibrium since one is not able to foresee how slow the mixing rate might be for real problems especially for those in high-dimensional space; 
 
-4. set a suitable step size in "thinning" to make sure final sample is close to independent if independence is desired (the ACF plot can be used to detect autocorrelation).
+4. Optional: set a suitable step size in "thinning" to make sure the final sample is close to independent if independence or low correlation is highly desired (the ACF plot can be used to detect autocorrelation). But "thinning" will inevitably sacrifice some estimation efficiency.
 
 The posterior results produced by our fast example may not be very reliable; we have used the fast sample just for tutorial purposes. For the results of the Bayesian clearance estimator to truly reflect the posterior uncertainty in our estimators, we need to ensure that stationarity has been achieved. Results that satisfy the requisite diagnostics are found in a longer sample (`slowExample`), which we have saved into a dataset called \code{posterior.rda} and incorporated into the **`bhrcr`** package. To see the results, just run the slow example in the demo: 
 ```{r slowExample, eval = FALSE}

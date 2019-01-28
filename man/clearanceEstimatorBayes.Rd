@@ -6,7 +6,8 @@
 \usage{
 clearanceEstimatorBayes(data, covariates = NULL, seed = 1234,
   detect.limit = 40, outlier.detect = TRUE, conf.level = 0.95,
-  niteration = 1e+05, burnin = 500, thin = 50, filename = "output.csv")
+  niteration = 1e+05, burnin = 500, thin = 50,
+  filename = "output.csv")
 }
 \arguments{
 \item{data}{a data frame containing the profiles of patients.

@@ -1,13 +1,22 @@
 citHeader("To cite in publications use:")
 
-citEntry(entry = "Article",
-  title        = "Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model",
-  author       = personList(as.person("Saeed Sharifi-Malvajerdi"), as.person("Feiyu Zhu"), as.person("Colin B. Fogarty"), as.person("Michael P. Fay"), as.person("Rick M. Fairhurst"), as.person("Jennifer A. Flegg"), as.person("Kasia Stepniewska"), as.person("Dylan S. Small")
+citEntry(
+entry = "Article",
+title="Malaria parasite clearance rate regression: an R software package for a Bayesian hierarchical regression model",
+author       = personList(as.person("Saeed Sharifi-Malvajerdi"), as.person("Feiyu Zhu"), as.person("Colin B. Fogarty"), as.person("Michael P. Fay"), as.person("Rick M. Fairhurst"), as.person("Jennifer A. Flegg"), as.person("Kasia Stepniewska"), as.person("Dylan S. Small")
                    ),
-  journal      = "Malaria Journal",
-  year = "2018",
-  textVersion  =
-  paste("Sharifi-Malvajerdi, S, Zhu, F, Fogarty, CB, Fay, MP, Fairhurst, RM, Flegg, JA, Stepniewska, K, and  Small, DS (2018).",
-        "Malaria Parasite Clearance Rate Regression: An R Software Package for a Bayesian Hierarchical Regression Model.",
+journal="Malaria Journal",
+year="2019",
+month="Jan",
+day="05",
+volume="18",
+number="1",
+pages="4",
+abstract="Emerging resistance to anti-malarial drugs has led malaria researchers to investigate what covariates (parasite and host factors) are associated with resistance. In this regard, investigation of how covariates impact malaria parasites clearance is often performed using a two-stage approach in which the WWARN Parasite Clearance Estimator or PCE is used to estimate parasite clearance rates and then the estimated parasite clearance is regressed on the covariates. However, the recently developed Bayesian Clearance Estimator instead leads to more accurate results for hierarchial regression modelling which motivated the authors to implement the method as an R package, called ``bhrcr''.",
+issn="1475-2875",
+doi="10.1186/s12936-018-2631-8",
+url="https://doi.org/10.1186/s12936-018-2631-8",
+textVersion  = paste("Sharifi-Malvajerdi, S, Zhu, F, Fogarty, CB, Fay, MP, Fairhurst, RM, Flegg, JA, Stepniewska, K, and  Small, DS (2019).",
+        "Malaria parasite clearance rate regression: an R software package for a Bayesian hierarchical regression model.",
         "Malaria Journal")
 )
